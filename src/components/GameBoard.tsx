@@ -1,19 +1,28 @@
 import { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import './Gameboard.css'
+// import { generateRandomCoordinates } from '../helperFunctions';
 
 type Cell = "empty" | "snake" | "food";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
-type SnakePosition = Array<[number, number]>;
+type MapCoordinates = Array<[number, number]>;
 const gridSize = 25;
 
-export default function GameBoard() {
-  let initialSnakePosition: SnakePosition = [[12, 13]]
-  let snakeHead = 0;
+const generateRandomCoordinates = (gridSize: number): MapCoordinates => {
+  const randomRow = Math.floor(Math.random() * gridSize);
+  const randomCol = Math.floor(Math.random() * gridSize);
+  return [[randomRow, randomCol]];
+}
 
-  const [snakePosition, setSnakePosition] = useState<SnakePosition>(initialSnakePosition);
+export default function GameBoard() {
+  let initialSnakePosition: MapCoordinates = [[12, 13]]
+  // let snakeHead = 0;
+
+  const [snakePosition, setSnakePosition] = useState<MapCoordinates>(initialSnakePosition);
+  const [snakeBody, setSnakeBody] = useState<Array<[number,number]>>([])
   const [snakeDirection, setSnakeDirection] = useState<Direction>('UP');
-  const [superheroMode, setSuperheroMode] = useState<Boolean>(false);
+  const [foodPosition, setFoodPosition] = useState<MapCoordinates>([[10, 10]])
+  // const [superheroMode, setSuperheroMode] = useState<Boolean>(false);
   const [lost, setLost] = useState<Boolean>(false);
 
   let grid: Cell[][] = [...Array(gridSize)].map(() =>
@@ -23,6 +32,14 @@ export default function GameBoard() {
   let gridWithSnake = grid;
 
   snakePosition.forEach(([row, col]) => {
+    gridWithSnake[row][col] = "snake";
+  })
+
+  foodPosition.forEach(([row, col]) => {
+    gridWithSnake[row][col] = "food"
+  })
+  
+  snakeBody.forEach(([row, col]) => {
     gridWithSnake[row][col] = "snake";
   })
 
@@ -57,8 +74,17 @@ export default function GameBoard() {
       // Update snake position based on the direction
       setSnakePosition((prevSnakePosition) => {
         const [headRow, headCol] = prevSnakePosition[0];
+        const [foodRow, foodCol] = foodPosition[0]
 
-        let newSnakePosition: SnakePosition;
+        if (headRow === foodRow && headCol === foodCol) {
+          console.log('chomp chomp chomp');
+          setFoodPosition(() => generateRandomCoordinates(gridSize));
+          setSnakeBody((prevSnakeBody) => [prevSnakePosition[0], ...prevSnakeBody])
+        }
+
+        console.log(snakeBody)
+
+        let newSnakePosition: MapCoordinates;
 
         // Check if the head will be out of bounds
         if (headRow - 1 < 0 || headRow + 1 >= gridSize || headCol - 1 < 0 || headCol + 1 >= gridSize) {
@@ -93,19 +119,13 @@ export default function GameBoard() {
     return () => clearInterval(intervalId);
   }, [snakeDirection]);
 
-
-  // if (lost) return (
-  //   <div>
-  //     <Typography sx={{}}>You lost!</Typography>
-  //   </div>
-  // )
-
   return (
     <Box>
+      {lost && <Typography>You lost!</Typography>}
       {gridWithSnake.map((row, rowIdx) => (
         <Box key={rowIdx} sx={{ display: 'flex' }}>
           {row.map((cell, cellIdx) => (
-            <Box key={cellIdx} sx={{ backgroundColor: cell === "snake" ? 'green' : '#f9f9f7', height: '1rem', width: '1rem', border: '1px solid #E3F0F7' }}></Box>
+            <Box key={cellIdx} sx={{ backgroundColor: cell === "food" ? '#FECF49' : cell === "snake" ? 'green' : '#f9f9f7', height: '1rem', width: '1rem', border: '1px solid #E3F0F7' }}></Box>
           ))}
         </Box>
       ))}
