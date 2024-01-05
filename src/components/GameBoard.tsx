@@ -7,19 +7,20 @@ type Cell = "empty" | "snake" | "food";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type MapCoordinates = [number, number];
 type SnakeCoordinates = Array<[number, number]>;
-const gridSize = 25;
+const gridSize = 20;
 
 const generateRandomCoordinates = (gridSize: number): MapCoordinates => {
-  const randomX = Math.floor(Math.random() * gridSize);
-  const randomY = Math.floor(Math.random() * gridSize);
+  const randomX = Math.floor(Math.random() * (gridSize - 2) + 1);
+  const randomY = Math.floor(Math.random() * (gridSize - 2) + 1);
+  // console.log(`randomX: ${randomX}, randomY: ${randomY}`)
   return [randomX, randomY];
 }
 
 export default function GameBoard() {
 
-  const [snakePosition, setSnakePosition] = useState<SnakeCoordinates>([[1, 1]]);
+  const [snakePosition, setSnakePosition] = useState<SnakeCoordinates>([[2, 2]]);
   const [snakeDirection, setSnakeDirection] = useState<Direction>('DOWN');
-  const [foodPosition, setFoodPosition] = useState<MapCoordinates>([3, 1])
+  const [foodPosition, setFoodPosition] = useState<MapCoordinates>([4, 2])
   const [score, setScore] = useState<number>(0);
   const [lost, setLost] = useState<Boolean>(false);
 
@@ -62,22 +63,42 @@ export default function GameBoard() {
   }, []);
 
   useEffect(() => {
-    console.log('RE RENDER')
+    let snakeBody = snakePosition.slice(1);
+    let snakeHead = snakePosition[0];
+
+    if (snakeBody.some((bodyPart) => bodyPart[0] === snakeHead[0] && bodyPart[1] === snakeHead[1])) {
+      console.log('CRASH!')
+      setLost(true);
+    }
+
+  }, [snakePosition])
+
+  useEffect(() => {
+    // console.log('RE RENDER')
     const intervalId = setInterval(() => {
       // Update snake position based on the direction
       setSnakePosition((prevSnakePosition) => {
         const [headRow, headCol] = prevSnakePosition[0];
         const [foodRow, foodCol] = foodPosition;
-        console.log(headRow, headCol)
+
         // Check if the head will be out of bounds
-        if (headRow <= 0 || headRow >= gridSize - 1 || headCol <= 0 || headCol >= gridSize - 1) {
+        if (headRow < 1 || headRow >= gridSize - 1 || headCol < 1 || headCol >= gridSize - 1) {
           setLost(true);
           clearInterval(intervalId); // Clear the interval immediately when the game is lost
           return prevSnakePosition; // Return the current position to prevent further movement
         }
 
+        // check if head is in same position as body
+        // if (snakePosition.slice(1).some((position) => {
+        //   // console.log(`position: ${position}}`)
+        //   position[0] === headRow || position[1] === headCol
+        // })) {
+        //   setLost(true);
+        //   clearInterval(intervalId);
+        //   return prevSnakePosition;
+        // }
+
         if (headRow === foodRow && headCol === foodCol) {
-          console.log('chomp chomp chomp');
           setScore((prevScore) => prevScore + 1);
           setFoodPosition(() => generateRandomCoordinates(gridSize));
         }
@@ -105,7 +126,7 @@ export default function GameBoard() {
 
         return newSnakePosition;
       });
-    }, 100);
+    }, 200);
 
     return () => clearInterval(intervalId);
   }, [snakeDirection, score]);
@@ -114,13 +135,27 @@ export default function GameBoard() {
     <Box>
       <Typography>Score: {score.toString()}</Typography>
       {lost && <Typography>You lost!</Typography>}
-      {gridWithSnake.map((row, rowIdx) => (
-        <Box key={rowIdx} sx={{ display: 'flex' }}>
-          {row.map((cell, cellIdx) => (
-            <Box key={cellIdx} sx={{ backgroundColor: cell === "food" ? '#FECF49' : cell === "snake" ? 'green' : '#f9f9f7', height: '1rem', width: '1rem', border: '1px solid #E3F0F7' }}></Box>
-          ))}
+      {gridWithSnake.map((row, rowIdx) =>
+        <Box
+          key={rowIdx}
+          sx={{
+            display: 'flex',
+          }}
+        >
+          {row.map((cell, cellIdx) => {
+            return (
+              <Box
+                key={cellIdx}
+                sx={{
+                  backgroundColor: rowIdx === 0 || rowIdx === gridSize - 1 || cellIdx === 0 || cellIdx === gridSize - 1 ? "#ECEDFC" : cell === "food" ? '#FECF49' : cell === "snake" ? 'green' : '#f9f9f7',
+                  height: '1rem',
+                  width: '1rem',
+                }}>
+              </Box>
+            )
+          })}
         </Box>
-      ))}
+      )}
     </Box>
   )
 }
