@@ -70,7 +70,7 @@ export default function GameBoard() {
         const [foodRow, foodCol] = foodPosition;
         console.log(headRow, headCol)
         // Check if the head will be out of bounds
-        if (headRow < 0 || headRow > gridSize || headCol < 0 || headCol >= gridSize) {
+        if (headRow <= 0 || headRow >= gridSize - 1 || headCol <= 0 || headCol >= gridSize - 1) {
           setLost(true);
           clearInterval(intervalId); // Clear the interval immediately when the game is lost
           return prevSnakePosition; // Return the current position to prevent further movement
@@ -78,20 +78,7 @@ export default function GameBoard() {
 
         if (headRow === foodRow && headCol === foodCol) {
           console.log('chomp chomp chomp');
-
-          setScore((prevScore) => {
-            return prevScore + 1;
-          });
-
-          // setSnakeBody((prevSnakeBody) => {
-          //   // console.log('prevSnakeBody');
-          //   // console.log(...prevSnakeBody);
-          //   return [prevSnakePosition[0], ...prevSnakeBody];
-          // })
-          // setSnakePosition([...prevSnakePosition, ...snakeBody])
-          // console.log('...snakeBody')
-          // console.log(...snakeBody)
-
+          setScore((prevScore) => prevScore + 1);
           setFoodPosition(() => generateRandomCoordinates(gridSize));
         }
 
