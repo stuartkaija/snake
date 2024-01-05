@@ -5,24 +5,22 @@ import './Gameboard.css'
 
 type Cell = "empty" | "snake" | "food";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
-type MapCoordinates = Array<[number, number]>;
+type MapCoordinates = [number, number];
+type SnakeCoordinates = Array<[number, number]>;
 const gridSize = 25;
 
 const generateRandomCoordinates = (gridSize: number): MapCoordinates => {
-  const randomRow = Math.floor(Math.random() * gridSize);
-  const randomCol = Math.floor(Math.random() * gridSize);
-  return [[randomRow, randomCol]];
+  const randomX = Math.floor(Math.random() * gridSize);
+  const randomY = Math.floor(Math.random() * gridSize);
+  return [randomX, randomY];
 }
 
 export default function GameBoard() {
-  let initialSnakePosition: MapCoordinates = [[12, 13]]
-  // let snakeHead = 0;
 
-  const [snakePosition, setSnakePosition] = useState<MapCoordinates>(initialSnakePosition);
-  const [snakeBody, setSnakeBody] = useState<Array<[number,number]>>([])
-  const [snakeDirection, setSnakeDirection] = useState<Direction>('UP');
-  const [foodPosition, setFoodPosition] = useState<MapCoordinates>([[10, 10]])
-  // const [superheroMode, setSuperheroMode] = useState<Boolean>(false);
+  const [snakePosition, setSnakePosition] = useState<SnakeCoordinates>([[1, 1]]);
+  const [snakeDirection, setSnakeDirection] = useState<Direction>('DOWN');
+  const [foodPosition, setFoodPosition] = useState<MapCoordinates>([3, 1])
+  const [score, setScore] = useState<number>(0);
   const [lost, setLost] = useState<Boolean>(false);
 
   let grid: Cell[][] = [...Array(gridSize)].map(() =>
@@ -31,17 +29,11 @@ export default function GameBoard() {
 
   let gridWithSnake = grid;
 
-  snakePosition.forEach(([row, col]) => {
-    gridWithSnake[row][col] = "snake";
+  snakePosition.forEach(([x, y]) => {
+    gridWithSnake[x][y] = "snake";
   })
 
-  foodPosition.forEach(([row, col]) => {
-    gridWithSnake[row][col] = "food"
-  })
-  
-  snakeBody.forEach(([row, col]) => {
-    gridWithSnake[row][col] = "snake";
-  })
+  gridWithSnake[foodPosition[0]][foodPosition[1]] = "food";
 
   const handleKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
@@ -70,42 +62,54 @@ export default function GameBoard() {
   }, []);
 
   useEffect(() => {
+    console.log('RE RENDER')
     const intervalId = setInterval(() => {
       // Update snake position based on the direction
       setSnakePosition((prevSnakePosition) => {
         const [headRow, headCol] = prevSnakePosition[0];
-        const [foodRow, foodCol] = foodPosition[0]
-
-        if (headRow === foodRow && headCol === foodCol) {
-          console.log('chomp chomp chomp');
-          setFoodPosition(() => generateRandomCoordinates(gridSize));
-          setSnakeBody((prevSnakeBody) => [prevSnakePosition[0], ...prevSnakeBody])
-        }
-
-        console.log(snakeBody)
-
-        let newSnakePosition: MapCoordinates;
-
+        const [foodRow, foodCol] = foodPosition;
+        console.log(headRow, headCol)
         // Check if the head will be out of bounds
-        if (headRow - 1 < 0 || headRow + 1 >= gridSize || headCol - 1 < 0 || headCol + 1 >= gridSize) {
+        if (headRow < 0 || headRow > gridSize || headCol < 0 || headCol >= gridSize) {
           setLost(true);
           clearInterval(intervalId); // Clear the interval immediately when the game is lost
           return prevSnakePosition; // Return the current position to prevent further movement
         }
 
+        if (headRow === foodRow && headCol === foodCol) {
+          console.log('chomp chomp chomp');
+
+          setScore((prevScore) => {
+            return prevScore + 1;
+          });
+
+          // setSnakeBody((prevSnakeBody) => {
+          //   // console.log('prevSnakeBody');
+          //   // console.log(...prevSnakeBody);
+          //   return [prevSnakePosition[0], ...prevSnakeBody];
+          // })
+          // setSnakePosition([...prevSnakePosition, ...snakeBody])
+          // console.log('...snakeBody')
+          // console.log(...snakeBody)
+
+          setFoodPosition(() => generateRandomCoordinates(gridSize));
+        }
+
+        let newSnakePosition: SnakeCoordinates;
+
         // Calculate the new snake position based on the direction
         switch (snakeDirection) {
           case 'UP':
-            newSnakePosition = [[headRow - 1 < 0 ? gridSize - 1 : headRow - 1, headCol], ...prevSnakePosition.slice(0, -1)];
+            newSnakePosition = [[headRow - 1, headCol], ...prevSnakePosition.slice(0, score)];
             break;
           case 'DOWN':
-            newSnakePosition = [[headRow + 1 >= gridSize ? 0 : headRow + 1, headCol], ...prevSnakePosition.slice(0, -1)];
+            newSnakePosition = [[headRow + 1, headCol], ...prevSnakePosition.slice(0, score)];
             break;
           case 'LEFT':
-            newSnakePosition = [[headRow, headCol - 1 < 0 ? gridSize - 1 : headCol - 1], ...prevSnakePosition.slice(0, -1)];
+            newSnakePosition = [[headRow, headCol - 1], ...prevSnakePosition.slice(0, score)];
             break;
           case 'RIGHT':
-            newSnakePosition = [[headRow, headCol + 1 >= gridSize ? 0 : headCol + 1], ...prevSnakePosition.slice(0, -1)];
+            newSnakePosition = [[headRow, headCol + 1], ...prevSnakePosition.slice(0, score)];
             break;
           default:
             newSnakePosition = prevSnakePosition;
@@ -114,13 +118,14 @@ export default function GameBoard() {
 
         return newSnakePosition;
       });
-    }, 200);
+    }, 100);
 
     return () => clearInterval(intervalId);
-  }, [snakeDirection]);
+  }, [snakeDirection, score]);
 
   return (
     <Box>
+      <Typography>Score: {score.toString()}</Typography>
       {lost && <Typography>You lost!</Typography>}
       {gridWithSnake.map((row, rowIdx) => (
         <Box key={rowIdx} sx={{ display: 'flex' }}>
