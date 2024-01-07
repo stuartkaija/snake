@@ -6,17 +6,16 @@ import CustomButton from './CustomButton';
 // import { generateRandomCoordinates } from '../helperFunctions';
 
 type Character = "SNAKE" | "WORM"
-type Difficulty = "NORMAL" | "IMPOSSIBLE" | "EASY"
+type Difficulty = "NORMAL" | "HARD" | "EASY"
 type Cell = "EMPTY" | "SNAKE" | "FOOD";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type MapCoordinates = [number, number];
 type SnakeCoordinates = Array<[number, number]>;
-const gridSize = 25;
+const gridSize = 30;
 
 const generateRandomCoordinates = (gridSize: number): MapCoordinates => {
   const randomX = Math.floor(Math.random() * (gridSize - 2) + 1);
   const randomY = Math.floor(Math.random() * (gridSize - 2) + 1);
-  // console.log(`randomX: ${randomX}, randomY: ${randomY}`)
   return [randomX, randomY];
 }
 
@@ -68,6 +67,9 @@ export default function GameBoard() {
       case "ArrowRight":
         setSnakeDirection("RIGHT");
         break;
+      case " ":
+        resetGame();
+        break;
       default:
         break;
     }
@@ -90,14 +92,14 @@ export default function GameBoard() {
         const [foodRow, foodCol] = foodPosition;
 
         // crash into self logic
-        if (snakeBody.some((bodyPart) => bodyPart[0] === snakeHead[0] && bodyPart[1] === snakeHead[1])) {
+        if (difficulty !== "EASY" && (snakeBody.some((bodyPart) => bodyPart[0] === snakeHead[0] && bodyPart[1] === snakeHead[1]))) {
           setLost(true);
           clearInterval(intervalId);
           return prevSnakePosition;
         }
 
         // out of bounds logic
-        if (snakeHead[0] < 1 || snakeHead[0] >= gridSize - 1 || snakeHead[1] < 1 || snakeHead[1] >= gridSize - 1) {
+        if (difficulty !== "EASY" && (snakeHead[0] < 1 || snakeHead[0] >= gridSize - 1 || snakeHead[1] < 1 || snakeHead[1] >= gridSize - 1)) {
           setLost(true);
           clearInterval(intervalId); // Clear the interval immediately when the game is lost
           return prevSnakePosition; // Return the current position to prevent further movement
@@ -114,15 +116,31 @@ export default function GameBoard() {
         // calculate the new snake position based on the direction
         switch (snakeDirection) {
           case 'UP':
+            if (difficulty === 'EASY') {
+              newSnakePosition = [[snakeHead[0] - 1 < 0 ? gridSize - 1 : snakeHead[0] - 1, snakeHead[1]], ...prevSnakePosition.slice(0, score)]
+              break;
+            }
             newSnakePosition = [[snakeHead[0] - 1, snakeHead[1]], ...prevSnakePosition.slice(0, score)];
             break;
           case 'DOWN':
+            if (difficulty === 'EASY') {
+              newSnakePosition = [[snakeHead[0] + 1 >= gridSize ? 0 : snakeHead[0] + 1, snakeHead[1]], ...prevSnakePosition.slice(0, score)];
+              break;
+            }
             newSnakePosition = [[snakeHead[0] + 1, snakeHead[1]], ...prevSnakePosition.slice(0, score)];
             break;
           case 'LEFT':
+            if (difficulty === 'EASY') {
+              newSnakePosition = [[snakeHead[0], snakeHead[1] - 1 < 0 ? gridSize - 1 : snakeHead[1] - 1], ...prevSnakePosition.slice(0, score)];
+              break;
+            }
             newSnakePosition = [[snakeHead[0], snakeHead[1] - 1], ...prevSnakePosition.slice(0, score)];
             break;
           case 'RIGHT':
+            if (difficulty === 'EASY') {
+              newSnakePosition = [[snakeHead[0], snakeHead[1] + 1 >= gridSize ? 0 : snakeHead[1] + 1], ...prevSnakePosition.slice(0, score)];
+              break;
+            }
             newSnakePosition = [[snakeHead[0], snakeHead[1] + 1], ...prevSnakePosition.slice(0, score)];
             break;
           default:
@@ -132,7 +150,7 @@ export default function GameBoard() {
 
         return newSnakePosition;
       });
-    }, 80);
+    }, difficulty === "HARD" ? 10 : 80);
 
     return () => clearInterval(intervalId);
   }, [snakeDirection, snakePosition, score]);
@@ -166,7 +184,7 @@ export default function GameBoard() {
           </Box>
         )}
         <Typography>Score: {score.toString()}</Typography>
-        <Typography fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER</Typography>
+        <Typography fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER - space to reset.</Typography>
       </Box>
       <Box sx={{
         display: 'flex',
@@ -188,10 +206,28 @@ export default function GameBoard() {
         <BasicSelect
           name={'Difficulty'}
           value={difficulty}
-          options={['NORMAL', 'IMPOSSIBLE', 'EASY']}
+          options={['EASY', 'NORMAL', 'HARD']}
           setState={setDifficulty}
         />
       </Box>
     </Box >
   )
 }
+
+// switch (snakeDirection) {
+//   case 'UP':
+//     newSnakePosition = [[headRow - 1 < 0 ? gridSize - 1 : headRow - 1, headCol], ...prevSnakePosition.slice(0, -1)];
+//     break;
+//   case 'DOWN':
+//     newSnakePosition = [[headRow + 1 >= gridSize ? 0 : headRow + 1, headCol], ...prevSnakePosition.slice(0, -1)];
+//     break;
+//   case 'LEFT':
+//     newSnakePosition = [[headRow, headCol - 1 < 0 ? gridSize - 1 : headCol - 1], ...prevSnakePosition.slice(0, -1)];
+//     break;
+//   case 'RIGHT':
+//     newSnakePosition = [[headRow, headCol + 1 >= gridSize ? 0 : headCol + 1], ...prevSnakePosition.slice(0, -1)];
+//     break;
+//   default:
+//     newSnakePosition = prevSnakePosition;
+//     break;
+// }

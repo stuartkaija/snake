@@ -1,16 +1,11 @@
-import './App.css'
-import GameBoard from './components/GameBoard'
+import GameBoard from './components/GameBoard';
+import { Box } from '@mui/material';
 
 function App() {
-  // const [count, setCount] = useState(0)
-
   return (
     <main>
       <h1>Snake</h1>
       <GameBoard/>
-      <div className="card">
-
-      </div>
     </main>
   )
 }
