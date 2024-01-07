@@ -17,7 +17,7 @@ export default function BasicSelect({ name, value, options, setState }) {
         <Select
           sx={{
             borderRadius: '0.5rem',
-            margin: '1rem 0rem',
+            margin: '1rem',
             fontSize: '1em',
             fontWeight: '500',
             fontFamily: 'inherit',

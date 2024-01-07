@@ -157,10 +157,32 @@ export default function GameBoard() {
 
   return (
     <Box sx={{
-      display: 'grid',
-      gridTemplateColumns: '2fr 1fr',
-      gridTemplateRows: '1fr'
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
     }}>
+      <Box sx={{
+        display: 'flex',
+      }}>
+        <CustomButton
+          name={'New Game'}
+          clickHandler={resetGame}
+        />
+
+        <BasicSelect
+          name={'Character'}
+          value={character}
+          options={['SNAKE', 'WORM']}
+          setState={setCharacter}
+        />
+
+        <BasicSelect
+          name={'Difficulty'}
+          value={difficulty}
+          options={['EASY', 'NORMAL', 'HARD']}
+          setState={setDifficulty}
+        />
+      </Box>
       <Box>
         {gridWithSnake.map((row, rowIdx) =>
           <Box
@@ -183,51 +205,12 @@ export default function GameBoard() {
             })}
           </Box>
         )}
-        <Typography>Score: {score.toString()}</Typography>
-        <Typography fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER - space to reset.</Typography>
+        <Box>
+          <Typography>Score: {score.toString()}</Typography>
+          <Typography fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER - space to reset.</Typography>
+        </Box>
       </Box>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-      }}>
-        <CustomButton
-          name={'New Game'}
-          clickHandler={resetGame}
-        />
 
-        <BasicSelect
-          name={'Character'}
-          value={character}
-          options={['SNAKE', 'WORM']}
-          setState={setCharacter}
-        />
-
-        <BasicSelect
-          name={'Difficulty'}
-          value={difficulty}
-          options={['EASY', 'NORMAL', 'HARD']}
-          setState={setDifficulty}
-        />
-      </Box>
     </Box >
   )
 }
-
-// switch (snakeDirection) {
-//   case 'UP':
-//     newSnakePosition = [[headRow - 1 < 0 ? gridSize - 1 : headRow - 1, headCol], ...prevSnakePosition.slice(0, -1)];
-//     break;
-//   case 'DOWN':
-//     newSnakePosition = [[headRow + 1 >= gridSize ? 0 : headRow + 1, headCol], ...prevSnakePosition.slice(0, -1)];
-//     break;
-//   case 'LEFT':
-//     newSnakePosition = [[headRow, headCol - 1 < 0 ? gridSize - 1 : headCol - 1], ...prevSnakePosition.slice(0, -1)];
-//     break;
-//   case 'RIGHT':
-//     newSnakePosition = [[headRow, headCol + 1 >= gridSize ? 0 : headCol + 1], ...prevSnakePosition.slice(0, -1)];
-//     break;
-//   default:
-//     newSnakePosition = prevSnakePosition;
-//     break;
-// }

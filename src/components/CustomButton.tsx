@@ -9,7 +9,7 @@ export default function CustomButton({ name, clickHandler }) {
         borderRadius: '0.5rem',
         border: '1px solid transparent',
         padding: '0.5rem 1rem',
-        margin: '1rem 0rem',
+        margin: '1rem',
         fontSize: '1em',
         fontWeight: '500',
         fontFamily: 'inherit',
