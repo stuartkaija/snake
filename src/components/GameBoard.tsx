@@ -1,16 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, Divider } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import './Gameboard.css'
 import BasicSelect from './Select';
 import CustomButton from './CustomButton';
-// import { generateRandomCoordinates } from '../helperFunctions';
+import type { Cell, Direction, MapCoordinates, SnakeCoordinates } from '../types';
 
-type Character = "SNAKE" | "WORM"
-type Difficulty = "NORMAL" | "HARD" | "EASY"
-type Cell = "EMPTY" | "SNAKE" | "FOOD";
-type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
-type MapCoordinates = [number, number];
-type SnakeCoordinates = Array<[number, number]>;
 const gridSize = 30;
 
 const generateRandomCoordinates = (gridSize: number): MapCoordinates => {
@@ -20,8 +14,8 @@ const generateRandomCoordinates = (gridSize: number): MapCoordinates => {
 }
 
 export default function GameBoard() {
-  const [character, setCharacter] = useState<Character>('SNAKE');
-  const [difficulty, setDifficulty] = useState<Difficulty>('NORMAL');
+  const [character, setCharacter] = useState<string>('SNAKE');
+  const [difficulty, setDifficulty] = useState<string>('NORMAL');
 
   let initialSnakePosition: SnakeCoordinates = [[2, 2]];
   let initialDirection: Direction = "DOWN";

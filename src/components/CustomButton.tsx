@@ -1,7 +1,12 @@
 import { Button } from "@mui/material"
+import { MouseEventHandler } from "react"
 
-export default function CustomButton({ name, clickHandler }) {
-
+export default function CustomButton({
+   name, clickHandler 
+  }: {
+    name: string,
+    clickHandler: MouseEventHandler
+  }) {
   return (
     <Button
       onClick={clickHandler}
