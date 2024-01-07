@@ -5,19 +5,19 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Dispatch, SetStateAction } from 'react';
 
-type BasicSelectProps<T> = {
+type BasicSelectProps = {
   name: string;
   value: string;
   options: string[];
   setState: Dispatch<SetStateAction<string>>;
 };
 
-export default function BasicSelect<T>({ 
+export default function BasicSelect({ 
   name,
   value,
   options,
   setState 
-}: BasicSelectProps<T>) {
+}: BasicSelectProps) {
   const handleChange = (event: SelectChangeEvent<string>) => {
     setState(event.target.value as SetStateAction<string>);
   };
