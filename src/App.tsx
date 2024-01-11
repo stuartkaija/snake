@@ -46,7 +46,7 @@ function App() {
 
         }}
       >
-        <Typography variant='h1' fontFamily={'Basteleur'} fontSize={'3rem'} fontWeight={'bold'} lineHeight={'1.1'}>Snake</Typography>
+        <Typography variant='h1' fontSize={'3rem'} fontWeight={'bold'} lineHeight={'1.1'}>Snake</Typography>
         <GameBoard
           character={character}
           difficulty={difficulty}

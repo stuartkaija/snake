@@ -189,7 +189,7 @@ export default function GameBoard({
         alignItems:'center'
       }}>
         <Typography>Score: {score.toString()}</Typography>
-        <Typography fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER - space to reset.</Typography>
+        <Typography fontSize={'1.25rem'} fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER - space to reset.</Typography>
       </Box>
     </Box >
   )

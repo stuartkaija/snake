@@ -33,7 +33,7 @@ export default function Footer() {
           />
         </Link>
         <Link
-          href='https://www.github.com/stuartkaija'
+          href='https://www.github.com/stuartkaija/snake'
           target='_blank'
           rel='noopener noreferrer'
         >
@@ -52,7 +52,7 @@ export default function Footer() {
           />
         </Link>
       </Box>
-      <Typography>Built by Stuart Kaija</Typography>
+      <Typography fontSize={'0.85rem'}>Built by Stuart Kaija</Typography>
     </Box>
   )
 }
