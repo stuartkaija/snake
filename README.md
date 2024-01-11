@@ -1,6 +1,6 @@
 # Snake
 
-[Live Site](https://snake-dzybf573l-stuartkaija.vercel.app/)
+[Live Site](https://snake-bay-phi.vercel.app/)
 
 An implementation of the game [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre)).
 

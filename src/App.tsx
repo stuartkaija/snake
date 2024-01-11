@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery } from '@mui/material';
 import GameBoard from './components/GameBoard';
 import GameMenu from './components/GameMenu';
 import Footer from './components/Footer';
@@ -18,7 +18,7 @@ function App() {
   const [foodPosition, setFoodPosition] = useState<MapCoordinates>(initialFoodPosition)
   const [score, setScore] = useState<number>(0);
   const [lost, setLost] = useState<boolean>(false);
-  
+
   const resetGame = () => {
     setLost(false);
     setScore(0);
@@ -26,6 +26,8 @@ function App() {
     setSnakeDirection(initialDirection);
     setFoodPosition(initialFoodPosition);
   }
+
+  const belowThreshold = useMediaQuery('(max-width:800px)');
 
   return (
     <Box
@@ -46,29 +48,37 @@ function App() {
 
         }}
       >
-        <Typography variant='h1' fontSize={'3rem'} fontWeight={'bold'} lineHeight={'1.1'}>Snake</Typography>
-        <GameBoard
-          character={character}
-          difficulty={difficulty}
-          snakePosition={snakePosition}
-          setSnakePosition={setSnakePosition}
-          snakeDirection={snakeDirection}
-          setSnakeDirection={setSnakeDirection}
-          foodPosition={foodPosition}
-          setFoodPosition={setFoodPosition}
-          score={score}
-          setScore={setScore}
-          lost={lost}
-          setLost={setLost}
-          resetGame={resetGame}
-        />
-        <GameMenu
-          resetGame={resetGame}
-          character={character}
-          setCharacter={setCharacter}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
+        {belowThreshold ? (
+          <Box textAlign={'center'}>
+            <Typography>Mobile version under construction - please give us a try on your computer!</Typography>
+          </Box>
+        ) : (
+          <>
+            <Typography variant='h1' fontSize={'3rem'} fontWeight={'bold'} lineHeight={'1.1'}>Snake</Typography>
+            <GameBoard
+              character={character}
+              difficulty={difficulty}
+              snakePosition={snakePosition}
+              setSnakePosition={setSnakePosition}
+              snakeDirection={snakeDirection}
+              setSnakeDirection={setSnakeDirection}
+              foodPosition={foodPosition}
+              setFoodPosition={setFoodPosition}
+              score={score}
+              setScore={setScore}
+              lost={lost}
+              setLost={setLost}
+              resetGame={resetGame}
+            />
+            <GameMenu
+              resetGame={resetGame}
+              character={character}
+              setCharacter={setCharacter}
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
+            />
+          </>
+        )}
       </Box>
       <Footer />
     </Box>
