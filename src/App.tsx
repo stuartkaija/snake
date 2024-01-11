@@ -1,5 +1,6 @@
-import GameBoard from './components/GameBoard';
 import { Box, Typography } from '@mui/material';
+import GameBoard from './components/GameBoard';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -8,13 +9,13 @@ function App() {
       textAlign={'center'}
       sx={{
         display: 'flex',
-        flexDirection: 'column',
+        height: '100vh',
         alignItems: 'center',
-        justifyContent: 'center'
       }}
     >
-      <Typography variant='h1' fontSize={'3rem'} fontWeight={'bold'} lineHeight={'1.1'} margin={'0rem 0rem 1rem'}>Snake</Typography>
+      <Typography variant='h1' fontFamily={'Basteleur'} fontSize={'3rem'} fontWeight={'bold'} lineHeight={'1.1'} margin={'0rem 0rem 1rem'}>Snake</Typography>
       <GameBoard/>
+      <Footer/>
     </Box>
   )
 }

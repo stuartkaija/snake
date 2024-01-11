@@ -1,3 +1,16 @@
+@font-face {
+  font-family: 'Basteleur';
+  src:
+    url('./assets/fonts/Basteleur-Bold.woff'),
+    url('./assets/fonts/Basteleur-Bold.woff2'),
+    url('./assets/fonts/Basteleur-Moonlight.woff'),
+    url('./assets/fonts/Basteleur-Moonlight.woff2');
+}
+
+body {
+  font-family: 'Basteleur';
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -11,7 +24,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+/*
 body {
   margin: 0;
 }
@@ -54,6 +67,7 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+*/
 
 @media (prefers-color-scheme: light) {
   :root {
