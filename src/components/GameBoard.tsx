@@ -1,8 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect, Dispatch, SetStateAction } from 'react';
 import { Box, Typography } from '@mui/material';
-import './Gameboard.css'
-import BasicSelect from './Select';
-import CustomButton from './CustomButton';
 import type { Cell, Direction, MapCoordinates, SnakeCoordinates } from '../types';
 
 const gridSize = 30;
@@ -13,19 +10,35 @@ const generateRandomCoordinates = (gridSize: number): MapCoordinates => {
   return [randomX, randomY];
 }
 
-export default function GameBoard() {
-  const [character, setCharacter] = useState<string>('SNAKE');
-  const [difficulty, setDifficulty] = useState<string>('NORMAL');
-
-  let initialSnakePosition: SnakeCoordinates = [[2, 2]];
-  let initialDirection: Direction = "DOWN";
-  let initialFoodPosition: MapCoordinates = [4, 2];
-
-  const [snakePosition, setSnakePosition] = useState<SnakeCoordinates>(initialSnakePosition);
-  const [snakeDirection, setSnakeDirection] = useState<Direction>(initialDirection);
-  const [foodPosition, setFoodPosition] = useState<MapCoordinates>(initialFoodPosition)
-  const [score, setScore] = useState<number>(0);
-  const [lost, setLost] = useState<Boolean>(false);
+export default function GameBoard({
+  character,
+  difficulty,
+  snakePosition,
+  setSnakePosition,
+  snakeDirection,
+  setSnakeDirection,
+  foodPosition,
+  setFoodPosition,
+  score,
+  setScore,
+  lost,
+  setLost,
+  resetGame
+}: {
+  character: string,
+  difficulty: string,
+  snakePosition: SnakeCoordinates,
+  setSnakePosition: Dispatch<SetStateAction<SnakeCoordinates>>
+  snakeDirection: Direction
+  setSnakeDirection: Dispatch<SetStateAction<Direction>>
+  foodPosition: MapCoordinates
+  setFoodPosition: Dispatch<SetStateAction<MapCoordinates>>
+  score: number
+  setScore: Dispatch<SetStateAction<number>>
+  lost: boolean
+  setLost: Dispatch<SetStateAction<boolean>>
+  resetGame: Function
+}) {
 
   let grid: Cell[][] = [...Array(gridSize)].map(() =>
     [...Array(gridSize)].map(() => "EMPTY")
@@ -38,14 +51,6 @@ export default function GameBoard() {
   })
 
   gridWithSnake[foodPosition[0]][foodPosition[1]] = "FOOD";
-
-  const resetGame = () => {
-    setLost(false);
-    setScore(0);
-    setSnakePosition(initialSnakePosition);
-    setSnakeDirection(initialDirection);
-    setFoodPosition(initialFoodPosition);
-  }
 
   const handleKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
@@ -155,28 +160,6 @@ export default function GameBoard() {
       flexDirection: 'column',
       alignItems: 'center'
     }}>
-      <Box sx={{
-        display: 'flex',
-      }}>
-        <CustomButton
-          name={'New Game'}
-          clickHandler={resetGame}
-        />
-
-        <BasicSelect
-          name={'Character'}
-          value={character}
-          options={['SNAKE', 'WORM']}
-          setState={setCharacter}
-        />
-
-        <BasicSelect
-          name={'Difficulty'}
-          value={difficulty}
-          options={['EASY', 'NORMAL', 'HARD']}
-          setState={setDifficulty}
-        />
-      </Box>
       <Box>
         {gridWithSnake.map((row, rowIdx) =>
           <Box
@@ -199,12 +182,15 @@ export default function GameBoard() {
             })}
           </Box>
         )}
-        <Box>
-          <Typography>Score: {score.toString()}</Typography>
-          <Typography fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER - space to reset.</Typography>
-        </Box>
       </Box>
-
+      <Box sx={{
+        display:'flex',
+        flexDirection:'column',
+        alignItems:'center'
+      }}>
+        <Typography>Score: {score.toString()}</Typography>
+        <Typography fontSize={'1.25rem'} fontWeight={'bold'} sx={{ visibility: lost ? 'visible' : 'hidden' }}>GAME OVER - space to reset.</Typography>
+      </Box>
     </Box >
   )
 }
